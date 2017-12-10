@@ -1,0 +1,7 @@
+body {
+  background-color: #eee;
+}
+
+.lightbulb.on {
+  margin-top: 1px;
+}
