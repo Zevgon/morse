@@ -6,6 +6,10 @@ body {
   margin-top: 1px;
 }
 
+.lightbulb.off {
+  margin-bottom: 1px;
+}
+
 .game-container {
   margin: 0 auto;
   display: flex;
