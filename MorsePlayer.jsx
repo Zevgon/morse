@@ -6,6 +6,7 @@ import morseMap from './morse_map';
 import './master.css';
 
 const TIME_BETWEEN_LOOPS = 1000;
+const FLASH_BEAT_RATIO = [2, 3];
 
 export default class MorsePlayer extends Component {
   constructor(props) {
@@ -35,15 +36,19 @@ export default class MorsePlayer extends Component {
 
   quarterify(morse) {
     const res = [];
+    const totalPerBeat = FLASH_BEAT_RATIO[1];
+    const onPerBeat = FLASH_BEAT_RATIO[0];
+    const offPerBeat = FLASH_BEAT_RATIO[1] - FLASH_BEAT_RATIO[0];
+
     morse.split('').forEach((char) => {
       if (char === '.') {
-        for (let i = 0; i < 3; i += 1) res.push(true);
-        res.push(false);
+        for (let i = 0; i < onPerBeat; i += 1) res.push(true);
+        for (let i = 0; i < offPerBeat; i += 1) res.push(false);
       } else if (char === '-') {
-        for (let i = 0; i < 7; i += 1) res.push(true);
-        res.push(false);
+        for (let i = 0; i < totalPerBeat + onPerBeat; i += 1) res.push(true);
+        for (let i = 0; i < offPerBeat; i += 1) res.push(false);
       } else {
-        for (let i = 0; i < 4; i += 1) res.push(false);
+        for (let i = 0; i < totalPerBeat; i += 1) res.push(false);
       }
     });
     return res;
@@ -79,7 +84,7 @@ export default class MorsePlayer extends Component {
           }, TIME_BETWEEN_LOOPS);
         }
       }
-    }, this.props.speed / 4);
+    }, this.props.speed / FLASH_BEAT_RATIO[1]);
   }
 
   pause() {
