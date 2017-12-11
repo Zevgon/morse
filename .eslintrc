@@ -1,0 +1,50 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "16.0.0"
+    },
+    "import/resolver": {
+      "webpack": {
+        "config": "webpack.dev.config.js"
+      }
+    }
+  },
+  "globals": {
+    "pageData": true,
+    "userStatus": true,
+    "regionInfo": true,
+    "swal": true,
+    "ga": true,
+    "_": true,
+    "angular": true,
+    "StripeCheckout": true
+  },
+  "rules": {
+    "no-unused-expressions": 0,
+    "jsx-a11y/media-has-caption": 0,
+    "no-extend-native": 0,
+    "newline-per-chained-call": 1,
+    "no-param-reassign": 0,
+    "dot-notation": 1,
+    "func-names": 0,
+    "no-use-before-define": 2,
+    "react/jsx-no-bind": 0,
+    "react/prop-types": 0,
+    "no-console": 0,
+    "no-shadow": 0
+  },
+  "env": {
+    "browser": true,
+    "jquery": true,
+    "mocha": true
+  }
+}

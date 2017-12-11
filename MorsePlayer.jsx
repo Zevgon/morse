@@ -1,5 +1,3 @@
-/* eslint-disable react/prefer-stateless-function */
-/* eslint-disable no-unused-expressions */
 /* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 import morseMap from './morse_map';
@@ -14,6 +12,7 @@ export default class MorsePlayer extends Component {
     this.state = {
       playing: false,
       curQuarterBeatIdx: null,
+      audioOn: props.audioOn,
     };
     this.quarterBeats = this.getQuarteBeats();
     this.togglePlay = this.togglePlay.bind(this);
@@ -21,6 +20,29 @@ export default class MorsePlayer extends Component {
 
   componentDidMount() {
     if (this.props.autoPlay) this.play();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ audioOn: nextProps.audioOn });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!this.state.audioOn) {
+      this.beepNode.pause();
+      this.beepNode.currentTime = 0;
+      return;
+    }
+
+    const prevOn = this.quarterBeats[prevState.curQuarterBeatIdx];
+    const isOn = this.quarterBeats[this.state.curQuarterBeatIdx];
+    if (prevOn === isOn) return;
+
+    if (prevOn) {
+      this.beepNode.pause();
+      this.beepNode.currentTime = 0;
+    } else {
+      this.beepNode.play();
+    }
   }
 
   componentWillUnmount() {
@@ -76,7 +98,7 @@ export default class MorsePlayer extends Component {
       this.setState({
         curQuarterBeatIdx: this.state.curQuarterBeatIdx + 1,
       });
-      if (this.state.curQuarterBeatIdx >= this.quarterBeats.length) {
+      if (this.state.curQuarterBeatIdx >= this.quarterBeats.length - 1) {
         this.pause();
         if (this.props.loop) {
           this.timeout2 = setTimeout(() => {
@@ -84,7 +106,7 @@ export default class MorsePlayer extends Component {
           }, TIME_BETWEEN_LOOPS);
         }
       }
-    }, this.props.speed / FLASH_BEAT_RATIO[1]);
+    }, 300 / FLASH_BEAT_RATIO[1]);
   }
 
   pause() {
@@ -112,6 +134,10 @@ export default class MorsePlayer extends Component {
           className={`lightbulb ${onOff}`}
           alt="lightbulb"
           src={`./images/light_bulb_${onOff}.png`}
+        />
+        <audio
+          ref={(node) => { this.beepNode = node; }}
+          src="./sounds/morse_beep.m4a"
         />
       </div>
     );

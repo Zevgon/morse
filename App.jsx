@@ -1,4 +1,4 @@
-/* eslint-disable no-extend-native */
+/* eslint-disable jsx-a11y/audio-has-caption */
 import React, { Component } from 'react';
 import MorsePlayer from './MorsePlayer';
 
@@ -37,11 +37,13 @@ export default class App extends Component {
       guess: '',
       showCongrats: false,
       showAnswer: false,
+      audioOn: true,
     };
     this.togglePlay = this.togglePlay.bind(this);
     this.changeWord = this.changeWord.bind(this);
     this.handleGuessChange = this.handleGuessChange.bind(this);
     this.toggleAnswer = this.toggleAnswer.bind(this);
+    this.toggleAudio = this.toggleAudio.bind(this);
   }
 
   togglePlay() {
@@ -88,9 +90,11 @@ export default class App extends Component {
   }
 
   toggleAnswer() {
-    this.setState({
-      showAnswer: !this.state.showAnswer,
-    });
+    this.setState({ showAnswer: !this.state.showAnswer });
+  }
+
+  toggleAudio() {
+    this.setState({ audioOn: !this.state.audioOn });
   }
 
   render() {
@@ -108,6 +112,9 @@ export default class App extends Component {
         <button onClick={this.toggleAnswer}>
           {this.state.showAnswer ? 'Hide answer' : 'Show answer'}
         </button>
+        <button onClick={this.toggleAudio}>
+          {this.state.audioOn ? 'Turn audio off' : 'Turn audio on'}
+        </button>
         {this.state.showCongrats &&
           <div>Yay you did it!!</div>
         }
@@ -115,7 +122,13 @@ export default class App extends Component {
           <div>Answer: {this.state.word}</div>
         }
         {this.state.running &&
-          <MorsePlayer speed={300} word={this.state.word} autoPlay loop />
+          <MorsePlayer
+            speed={300}
+            word={this.state.word}
+            audioOn={this.state.audioOn}
+            autoPlay
+            loop
+          />
         }
         <input
           ref={(node) => { this.inputNode = node; }}
