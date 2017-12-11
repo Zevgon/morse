@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import MorsePlayer from './MorsePlayer';
 
-const query = 'http://api.wordnik.com/v4/words.json/randomWords?hasDictionaryDef=true&minCorpusCount=0&minLength=3&maxLength=7&limit=1&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5';
+const query = 'https://api.wordnik.com/v4/words.json/randomWords?hasDictionaryDef=true&minCorpusCount=0&minLength=3&maxLength=7&limit=1&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5';
 
 Array.prototype.sample = function () {
   const randIdx = Math.floor(Math.random() * this.length);
