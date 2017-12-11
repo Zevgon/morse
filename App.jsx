@@ -104,13 +104,13 @@ export default class App extends Component {
           {this.state.running ? 'Stop' : 'Start'}
         </button>
         <button onClick={this.changeWord}>
-          Change word (small selection)
+          Change word (random from small selection)
         </button>
         <button onClick={() => this.changeWord(false)}>
-          Change word (weird dictionary)
+          Change word (random from weird dictionary)
         </button>
         <button onClick={this.toggleAnswer}>
-          {this.state.showAnswer ? 'Hide answer' : 'Show answer'}
+          {this.state.showAnswer ? 'Hide current word' : 'Show current word'}
         </button>
         <button onClick={this.toggleAudio}>
           {this.state.audioOn ? 'Turn audio off' : 'Turn audio on'}
@@ -119,23 +119,26 @@ export default class App extends Component {
           <div>Yay you did it!!</div>
         }
         {this.state.showAnswer &&
-          <div>Answer: {this.state.word}</div>
+          <div>Current word: {this.state.word}</div>
         }
         {this.state.running &&
-          <MorsePlayer
-            speed={300}
-            word={this.state.word}
-            audioOn={this.state.audioOn}
-            autoPlay
-            loop
-          />
+          <div className="game-container">
+            <MorsePlayer
+              speed={300}
+              word={this.state.word}
+              audioOn={this.state.audioOn}
+              autoPlay
+              loop
+            />
+            <div>Enter a guess</div>
+            <input
+              ref={(node) => { this.inputNode = node; }}
+              type="text"
+              value={this.state.guess}
+              onChange={this.handleGuessChange}
+            />
+          </div>
         }
-        <input
-          ref={(node) => { this.inputNode = node; }}
-          type="text"
-          value={this.state.guess}
-          onChange={this.handleGuessChange}
-        />
       </div>
     );
   }
