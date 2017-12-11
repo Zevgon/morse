@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import morseMap from './morse_map';
 import './master.css';
 
-const TIME_BETWEEN_LOOPS = 2000;
+const TIME_BETWEEN_LOOPS = 1000;
 
 export default class MorsePlayer extends Component {
   constructor(props) {
@@ -20,6 +20,12 @@ export default class MorsePlayer extends Component {
 
   componentDidMount() {
     if (this.props.autoPlay) this.play();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+    clearTimeout(this.timeout1);
+    clearTimeout(this.timeout2);
   }
 
   getQuarteBeats() {
@@ -48,6 +54,12 @@ export default class MorsePlayer extends Component {
   }
 
   play() {
+    this.timeout1 = setTimeout(() => {
+      this.startFlashing();
+    }, 1000);
+  }
+
+  startFlashing() {
     if (this.interval) return;
 
     this.setState({
@@ -62,7 +74,7 @@ export default class MorsePlayer extends Component {
       if (this.state.curQuarterBeatIdx >= this.quarterBeats.length) {
         this.pause();
         if (this.props.loop) {
-          setTimeout(() => {
+          this.timeout2 = setTimeout(() => {
             this.play();
           }, TIME_BETWEEN_LOOPS);
         }
@@ -86,7 +98,6 @@ export default class MorsePlayer extends Component {
     const onOff = this.isOn() ? 'on' : 'off';
     return (
       <div>
-        <div>Morse player yay!</div>
         {!this.props.autoPlay &&
           <button onClick={this.togglePlay}>
             {this.state.playing ? 'Pause' : 'Play'}

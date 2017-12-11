@@ -5,3 +5,11 @@ body {
 .lightbulb.on {
   margin-top: 1px;
 }
+
+.game-container {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
