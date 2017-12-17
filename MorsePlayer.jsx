@@ -106,7 +106,7 @@ export default class MorsePlayer extends Component {
           }, TIME_BETWEEN_LOOPS);
         }
       }
-    }, 300 / FLASH_BEAT_RATIO[1]);
+    }, this.props.speed / FLASH_BEAT_RATIO[1]);
   }
 
   pause() {

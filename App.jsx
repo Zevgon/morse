@@ -34,24 +34,23 @@ export default class App extends Component {
     this.state = {
       running: false,
       word: words.sample(),
-      guess: '',
       showCongrats: false,
       showAnswer: false,
       audioOn: true,
+      speed: 300,
     };
     this.togglePlay = this.togglePlay.bind(this);
     this.changeWord = this.changeWord.bind(this);
-    this.handleGuessChange = this.handleGuessChange.bind(this);
     this.toggleAnswer = this.toggleAnswer.bind(this);
     this.toggleAudio = this.toggleAudio.bind(this);
+    this.changeSpeed = this.changeSpeed.bind(this);
+    this.updateWord = this.updateWord.bind(this);
   }
 
   togglePlay() {
     this.setState({
       running: !this.state.running,
       showCongrats: false,
-    }, () => {
-      if (this.state.running) this.inputNode.focus();
     });
   }
 
@@ -60,7 +59,6 @@ export default class App extends Component {
       this.setState({
         word: words.sample(),
         running: false,
-        guess: '',
         showCongrats: false,
       });
     } else {
@@ -70,23 +68,10 @@ export default class App extends Component {
           this.setState({
             word: data[0].word.toLowerCase(),
             running: false,
-            guess: '',
             showCongrats: false,
           });
         });
     }
-  }
-
-  handleGuessChange(e) {
-    const value = e.target.value.toLowerCase().trim();
-    this.setState({ guess: value }, () => {
-      if (value === this.state.word) {
-        this.setState({
-          running: false,
-          showCongrats: true,
-        });
-      }
-    });
   }
 
   toggleAnswer() {
@@ -95,6 +80,34 @@ export default class App extends Component {
 
   toggleAudio() {
     this.setState({ audioOn: !this.state.audioOn });
+  }
+
+  changeSpeed(e) {
+    if (!/^\d*$/.test(e.target.value)) {
+      this.setState({
+        speedError: 'Invalid speed. Digits only.',
+        running: false,
+      });
+    } else {
+      this.setState({
+        speed: e.target.value,
+        speedError: '',
+        running: false,
+      });
+    }
+  }
+
+  updateWord(e) {
+    if (!/^[\d\w ]*$/.test(e.target.value)) {
+      this.setState({
+        textError: 'Sorry, letters and numbers only',
+      });
+    } else {
+      this.setState({
+        word: e.target.value,
+        textError: '',
+      });
+    }
   }
 
   render() {
@@ -109,33 +122,50 @@ export default class App extends Component {
         <button onClick={() => this.changeWord(false)}>
           Change word (random from weird dictionary)
         </button>
-        <button onClick={this.toggleAnswer}>
-          {this.state.showAnswer ? 'Hide current word' : 'Show current word'}
-        </button>
         <button onClick={this.toggleAudio}>
           {this.state.audioOn ? 'Turn audio off' : 'Turn audio on'}
         </button>
+        Speed (milliseconds between beats - the lower the faster)
+        {this.state.speedError &&
+          <div>{this.state.speedError}</div>
+        }
+        <input
+          type="text"
+          value={this.state.speed}
+          onChange={this.changeSpeed}
+        />
+        <button
+          onClick={() => this.setState({ speed: 300, running: false })}
+        >Reset to default speed
+        </button>
+        <button onClick={this.toggleAnswer}>
+          {this.state.showAnswer ? 'Hide current text' : 'Show current text'}
+        </button>
+        {this.state.showAnswer &&
+          <div>
+            <div>Current text:</div>
+            <textarea
+              style={{ height: 100, width: 400 }}
+              type="text"
+              value={this.state.word}
+              onChange={this.updateWord}
+            />
+          </div>
+        }
+        {this.state.textError &&
+          <div>{this.state.textError}</div>
+        }
         {this.state.showCongrats &&
           <div>Yay you did it!!</div>
-        }
-        {this.state.showAnswer &&
-          <div>Current word: {this.state.word}</div>
         }
         {this.state.running &&
           <div className="game-container">
             <MorsePlayer
-              speed={300}
+              speed={this.state.speed || 300}
               word={this.state.word}
               audioOn={this.state.audioOn}
               autoPlay
               loop
-            />
-            <div>Enter a guess</div>
-            <input
-              ref={(node) => { this.inputNode = node; }}
-              type="text"
-              value={this.state.guess}
-              onChange={this.handleGuessChange}
             />
           </div>
         }

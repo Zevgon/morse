@@ -7756,35 +7756,32 @@ var App = function (_Component) {
     _this.state = {
       running: false,
       word: words.sample(),
-      guess: '',
       showCongrats: false,
       showAnswer: false,
-      audioOn: true
+      audioOn: true,
+      speed: 300
     };
     _this.togglePlay = _this.togglePlay.bind(_this);
     _this.changeWord = _this.changeWord.bind(_this);
-    _this.handleGuessChange = _this.handleGuessChange.bind(_this);
     _this.toggleAnswer = _this.toggleAnswer.bind(_this);
     _this.toggleAudio = _this.toggleAudio.bind(_this);
+    _this.changeSpeed = _this.changeSpeed.bind(_this);
+    _this.updateWord = _this.updateWord.bind(_this);
     return _this;
   }
 
   _createClass(App, [{
     key: 'togglePlay',
     value: function togglePlay() {
-      var _this2 = this;
-
       this.setState({
         running: !this.state.running,
         showCongrats: false
-      }, function () {
-        if (_this2.state.running) _this2.inputNode.focus();
       });
     }
   }, {
     key: 'changeWord',
     value: function changeWord() {
-      var _this3 = this;
+      var _this2 = this;
 
       var useLocalDict = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
@@ -7792,36 +7789,19 @@ var App = function (_Component) {
         this.setState({
           word: words.sample(),
           running: false,
-          guess: '',
           showCongrats: false
         });
       } else {
         fetch(query).then(function (res) {
           return res.json();
         }).then(function (data) {
-          _this3.setState({
+          _this2.setState({
             word: data[0].word.toLowerCase(),
             running: false,
-            guess: '',
             showCongrats: false
           });
         });
       }
-    }
-  }, {
-    key: 'handleGuessChange',
-    value: function handleGuessChange(e) {
-      var _this4 = this;
-
-      var value = e.target.value.toLowerCase().trim();
-      this.setState({ guess: value }, function () {
-        if (value === _this4.state.word) {
-          _this4.setState({
-            running: false,
-            showCongrats: true
-          });
-        }
-      });
     }
   }, {
     key: 'toggleAnswer',
@@ -7834,9 +7814,39 @@ var App = function (_Component) {
       this.setState({ audioOn: !this.state.audioOn });
     }
   }, {
+    key: 'changeSpeed',
+    value: function changeSpeed(e) {
+      if (!/^\d*$/.test(e.target.value)) {
+        this.setState({
+          speedError: 'Invalid speed. Digits only.',
+          running: false
+        });
+      } else {
+        this.setState({
+          speed: e.target.value,
+          speedError: '',
+          running: false
+        });
+      }
+    }
+  }, {
+    key: 'updateWord',
+    value: function updateWord(e) {
+      if (!/^[\d\w ]*$/.test(e.target.value)) {
+        this.setState({
+          textError: 'Sorry, letters and numbers only'
+        });
+      } else {
+        this.setState({
+          word: e.target.value,
+          textError: ''
+        });
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
-      var _this5 = this;
+      var _this3 = this;
 
       return _react2.default.createElement(
         'div',
@@ -7854,53 +7864,74 @@ var App = function (_Component) {
         _react2.default.createElement(
           'button',
           { onClick: function onClick() {
-              return _this5.changeWord(false);
+              return _this3.changeWord(false);
             } },
           'Change word (random from weird dictionary)'
-        ),
-        _react2.default.createElement(
-          'button',
-          { onClick: this.toggleAnswer },
-          this.state.showAnswer ? 'Hide current word' : 'Show current word'
         ),
         _react2.default.createElement(
           'button',
           { onClick: this.toggleAudio },
           this.state.audioOn ? 'Turn audio off' : 'Turn audio on'
         ),
+        'Speed (milliseconds between beats - the lower the faster)',
+        this.state.speedError && _react2.default.createElement(
+          'div',
+          null,
+          this.state.speedError
+        ),
+        _react2.default.createElement('input', {
+          type: 'text',
+          value: this.state.speed,
+          onChange: this.changeSpeed
+        }),
+        _react2.default.createElement(
+          'button',
+          {
+            onClick: function onClick() {
+              return _this3.setState({ speed: 300, running: false });
+            }
+          },
+          'Reset to default speed'
+        ),
+        _react2.default.createElement(
+          'button',
+          { onClick: this.toggleAnswer },
+          this.state.showAnswer ? 'Hide current text' : 'Show current text'
+        ),
+        this.state.showAnswer && _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'div',
+            null,
+            'Current text:'
+          ),
+          _react2.default.createElement('textarea', {
+            style: { height: 100, width: 400 },
+            type: 'text',
+            value: this.state.word,
+            onChange: this.updateWord
+          })
+        ),
+        this.state.textError && _react2.default.createElement(
+          'div',
+          null,
+          this.state.textError
+        ),
         this.state.showCongrats && _react2.default.createElement(
           'div',
           null,
           'Yay you did it!!'
         ),
-        this.state.showAnswer && _react2.default.createElement(
-          'div',
-          null,
-          'Current word: ',
-          this.state.word
-        ),
         this.state.running && _react2.default.createElement(
           'div',
           { className: 'game-container' },
           _react2.default.createElement(_MorsePlayer2.default, {
-            speed: 300,
+            speed: this.state.speed || 300,
             word: this.state.word,
             audioOn: this.state.audioOn,
             autoPlay: true,
             loop: true
-          }),
-          _react2.default.createElement(
-            'div',
-            null,
-            'Enter a guess'
-          ),
-          _react2.default.createElement('input', {
-            ref: function ref(node) {
-              _this5.inputNode = node;
-            },
-            type: 'text',
-            value: this.state.guess,
-            onChange: this.handleGuessChange
           })
         )
       );
@@ -8077,7 +8108,7 @@ var MorsePlayer = function (_Component) {
             }, TIME_BETWEEN_LOOPS);
           }
         }
-      }, 300 / FLASH_BEAT_RATIO[1]);
+      }, this.props.speed / FLASH_BEAT_RATIO[1]);
     }
   }, {
     key: 'pause',
