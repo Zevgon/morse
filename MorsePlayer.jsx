@@ -13,6 +13,7 @@ export default class MorsePlayer extends Component {
       playing: false,
       curQuarterBeatIdx: null,
       audioOn: props.audioOn,
+      word: props.word,
     };
     this.quarterBeats = this.getQuarteBeats();
     this.togglePlay = this.togglePlay.bind(this);

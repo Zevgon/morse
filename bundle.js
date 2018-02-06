@@ -7873,7 +7873,7 @@ var App = function (_Component) {
           { onClick: this.toggleAudio },
           this.state.audioOn ? 'Turn audio off' : 'Turn audio on'
         ),
-        'Speed (milliseconds between beats - the lower the faster)',
+        'Speed (milliseconds per beat - the lower the faster)',
         this.state.speedError && _react2.default.createElement(
           'div',
           null,
@@ -7989,7 +7989,8 @@ var MorsePlayer = function (_Component) {
     _this.state = {
       playing: false,
       curQuarterBeatIdx: null,
-      audioOn: props.audioOn
+      audioOn: props.audioOn,
+      word: props.word
     };
     _this.quarterBeats = _this.getQuarteBeats();
     _this.togglePlay = _this.togglePlay.bind(_this);
@@ -8204,7 +8205,8 @@ var morseMap = {
   7: '--...',
   8: '---..',
   9: '----.',
-  0: '-----'
+  0: '-----',
+  ' ': ' '
 };
 
 exports.default = morseMap;
