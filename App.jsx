@@ -125,7 +125,7 @@ export default class App extends Component {
         <button onClick={this.toggleAudio}>
           {this.state.audioOn ? 'Turn audio off' : 'Turn audio on'}
         </button>
-        Speed (milliseconds per beat - the lower the faster)
+        Speed (milliseconds between beats - the lower the faster)
         {this.state.speedError &&
           <div>{this.state.speedError}</div>
         }
